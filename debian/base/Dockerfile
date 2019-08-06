@@ -62,7 +62,12 @@ ENV ZULU_OPENJDK_VERSION="8=8.38.0.13"
 # base image that supports it
 ENV LANG="C.UTF-8"
 
-RUN echo "===> Updating debian ....." \
+RUN echo "===> Changing nobody user UID" \
+    && addgroup --gid 99 nobody \
+    && usermod -u 99 -g 99 nobody \
+    && echo "nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin" >> /etc/passwd \
+    && usermod -a -G users nobody \
+    && echo "===> Updating debian ....." \
     # TODO debian jessie has been deprecated and is only ex
     && echo "deb http://archive.debian.org/debian/ jessie main" > /etc/apt/sources.list \
     && echo "deb http://security.debian.org jessie/updates main" >> /etc/apt/sources.list \
