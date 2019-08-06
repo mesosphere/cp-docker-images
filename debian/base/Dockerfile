@@ -62,7 +62,12 @@ ENV ZULU_OPENJDK_VERSION="8=8.30.0.1"
 # base image that supports it
 ENV LANG="C.UTF-8"
 
-RUN echo "===> Updating debian ....." \
+RUN echo "===> Changing nobody user UID" \
+    && addgroup --gid 99 nobody \
+    && usermod -u 99 -g 99 nobody \
+    && echo "nobody:x:65534:65534:nobody:/nonexistent:/usr/sbin/nologin" >> /etc/passwd \
+    && usermod -a -G users nobody \
+    && echo "===> Updating debian ....." \
     && apt-get -qq update \
     \
     && echo "===> Installing curl wget netcat python...." \
